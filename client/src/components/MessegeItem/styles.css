@@ -1,0 +1,28 @@
+li {
+    height: 25px;
+    margin: 5px auto;
+}
+
+li span {
+    min-width: 50px;
+    max-width: 255px;
+    border-radius: 6px;
+    padding: 5px 10px;
+    border: 1px solid #cccc;
+    display: flexbox;
+    align-items: center;
+    justify-content: center;
+    margin: 0 15px;
+    color: #000;
+    font: 500 1.6rem Roboto;
+}
+
+li span.mine {
+    float: right;
+    background: #9871f5ad;
+}
+
+li span.other {
+    float: left;
+    background: var(--color-text-in-primary);
+}
