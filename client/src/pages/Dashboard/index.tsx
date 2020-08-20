@@ -1,24 +1,46 @@
 import React, { useState, FormEvent } from 'react';
+import io from 'socket.io-client';
+import * as uuid from 'uuid';
+
+import MessegeItem from '../../components/MessegeItem';
 
 import './styles.css';
-import MessegeItem from '../../components/MessegeItem';
+
+const mineId = uuid.v4();
+const socket = io('http://localhost:3333');
+socket.on('connect', () => console.log("[IO] Connect => New connection has been start."));
 
 function Dashboard() {
     const [messege, setMessege] = useState('');
+    const [name, setName] = useState('');
     const [messeges, setMessegens] = useState([
-        { author: '', messegeId: 0, messege: '' }
+        { author: '', messegeId: '', messege: '', authorName: '' }
     ]);
+
+    interface NewMessege {
+        author: string;
+        messegeId: string;
+        messege: string;
+        authorName: string;
+    }
+
+    const handleNemMessege = (newMessege: NewMessege) => {
+        setMessegens([...messeges, newMessege]);
+    }
+
+    socket.on('chat.messege.sent', handleNemMessege);
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault();
         
         if(messege.trim()) {
-            setMessege('');
-            setMessegens([...messeges, {
-                author: "mine",
-                messegeId: 1,
+            
+            socket.emit('chat.messege', {
+                author: mineId,
+                authorName: name,
                 messege
-            }])
+            })
+            setMessege('');
         }
     }
     return (
@@ -26,16 +48,23 @@ function Dashboard() {
             <div className="dashboard-content">
                 <div className="user">
                     <label htmlFor="name">Username</label>
-                    <input type="text" id="name"/>
+                    <input type="text" id="name" value={name} onChange={evt => {setName(evt.target.value)}}/>
                 </div>
 
                 <div className="chat-box">
                     <ul className="messeges-list">
                         {
                             messeges.map(messege => {
-                                return (
-                                    <MessegeItem key={messege.messegeId} author={messege.author} value={messege.messege}/>
-                                )
+                                if (messege.messegeId) {
+                                    return <MessegeItem
+                                                key={messege.messegeId}
+                                                author={(messege.author === mineId) ? "mine" : "other"}
+                                                value={messege.messege}
+                                                name={messege.authorName}
+                                            />
+                                }
+                                // eslint-disable-next-line
+                                return;
                             })
                         }
                     </ul>

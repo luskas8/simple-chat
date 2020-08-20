@@ -22,6 +22,10 @@ li span.mine {
     background: #9871f5ad;
 }
 
+li span.mine + span.mine {
+    margin: 15px;
+}
+
 li span.other {
     float: left;
     background: var(--color-text-in-primary);
