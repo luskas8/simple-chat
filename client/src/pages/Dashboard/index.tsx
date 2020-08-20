@@ -1,27 +1,26 @@
 import React, { useState, FormEvent } from 'react';
 import io from 'socket.io-client';
-import * as uuid from 'uuid';
+import { v4 as uuid} from 'uuid';
 
 import MessegeItem from '../../components/MessegeItem';
 
 import './styles.css';
 
-const mineId = uuid.v4();
+const mineId = uuid();
 const socket = io('http://localhost:3333');
 socket.on('connect', () => console.log("[IO] Connect => New connection has been start."));
 
 function Dashboard() {
-    const [messege, setMessege] = useState('');
     const [name, setName] = useState('');
+    const [messege, setMessege] = useState('');
     const [messeges, setMessegens] = useState([
-        { author: '', messegeId: '', messege: '', authorName: '' }
+        { id: '', messegeId: '', messege: ''}
     ]);
 
     interface NewMessege {
-        author: string;
+        id: string;
         messegeId: string;
         messege: string;
-        authorName: string;
     }
 
     const handleNemMessege = (newMessege: NewMessege) => {
@@ -36,8 +35,7 @@ function Dashboard() {
         if(messege.trim()) {
             
             socket.emit('chat.messege', {
-                author: mineId,
-                authorName: name,
+                id: mineId,
                 messege
             })
             setMessege('');
@@ -58,9 +56,8 @@ function Dashboard() {
                                 if (messege.messegeId) {
                                     return <MessegeItem
                                                 key={messege.messegeId}
-                                                author={(messege.author === mineId) ? "mine" : "other"}
+                                                author={(messege.id === mineId) ? "mine" : "other"}
                                                 value={messege.messege}
-                                                name={messege.authorName}
                                             />
                                 }
                                 // eslint-disable-next-line

@@ -5,7 +5,7 @@ import './styles.css';
 interface MessegeProps {
     value: string;
     author: string;
-    name: string;
+    name?: string;
 }
 
 const MessegeItem: React.FC <MessegeProps> = (props) => {
